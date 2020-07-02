@@ -41,7 +41,6 @@ app.post('/api/articles/:name/upvote', async (req, res) => {
     }, res);
 });
 app.post('/api/articles/:name/add-comment', async (req, res) => {
-    console.log(req.body);
     withDB(async (db) => {
         const {username,text}=req.body;
         const articleName = req.params.name;
