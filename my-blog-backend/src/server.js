@@ -1,8 +1,10 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import { MongoClient } from 'mongodb';
+import path from 'path';
 
 const app = express();
+app.use(express.static(path.join(__dirname, '/build')));
 app.use(bodyParser.json());
 
 const withDB = async (operations, res) => {
@@ -42,7 +44,7 @@ app.post('/api/articles/:name/upvote', async (req, res) => {
 });
 app.post('/api/articles/:name/add-comment', async (req, res) => {
     withDB(async (db) => {
-        const {username,text}=req.body;
+        const { username, text } = req.body;
         const articleName = req.params.name;
         const articleInfo = await db.collection('articles').findOne({ name: articleName });
         await db.collection('articles').updateOne({ name: articleName }, {
@@ -55,4 +57,7 @@ app.post('/api/articles/:name/add-comment', async (req, res) => {
     }, res);
 });
 
-app.listen(8000, () => console.log('Listening on port 8000')); 
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname + '/build/index.html'));
+})
+app.listen(8001, () => console.log('Listening on port 8000')); 
